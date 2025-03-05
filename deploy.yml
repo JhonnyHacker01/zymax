@@ -1,0 +1,31 @@
+name: Deploy to cPanel
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 19
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build
+        env:
+          VITE_APP_BASE_URL: ${{ vars.VITE_APP_BASE_URL }}
+          VITE_APP_NAME: ${{ vars.VITE_APP_NAME }}
+          VITE_APP_URL: ${{ vars.VITE_APP_URL }}
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+      - name: SFTP Deploy
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: "root"
+          server: "137.184.224.181"
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          local_path: "./dist/*"
+          remote_path: "/var/www/html"
+          sftpArgs: "-o ConnectTimeout=5"
