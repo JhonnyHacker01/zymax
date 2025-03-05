@@ -1,4 +1,4 @@
-name: Deploy to cPanel
+name: Deploy to Clouding.io
 
 on:
   push:
@@ -15,16 +15,11 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm run build
-        env:
-          VITE_APP_BASE_URL: ${{ vars.VITE_APP_BASE_URL }}
-          VITE_APP_NAME: ${{ vars.VITE_APP_NAME }}
-          VITE_APP_URL: ${{ vars.VITE_APP_URL }}
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
       - name: SFTP Deploy
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
           username: "root"
-          server: "137.184.224.181"
+          server: "185.254.204.65"
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           local_path: "./dist/*"
           remote_path: "/var/www/html"
